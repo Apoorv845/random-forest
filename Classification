@@ -1,0 +1,28 @@
+# Install necessary package
+if (!require("randomForest")) install.packages("randomForest")
+
+# Load library
+library(randomForest)
+
+# Load dataset
+data(iris)
+
+# Split dataset into training and test sets
+set.seed(42)
+train_idx <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[train_idx, ]
+test_data <- iris[-train_idx, ]
+
+# Train the Random Forest model
+rf_model <- randomForest(Species ~ ., data = train_data, ntree = 100, importance = TRUE)
+
+# Make predictions
+predictions <- predict(rf_model, test_data)
+
+# Evaluate the model
+conf_matrix <- table(predictions, test_data$Species)
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+print(paste("Accuracy:", round(accuracy, 2)))
+
+# View variable importance
+print(importance(rf_model))
